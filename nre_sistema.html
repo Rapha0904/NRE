@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NRE Digital - Secretaria Escolar</title>
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root{
+    --azul-escuro:#0b1635;
+    --azul-medio:#1d2d5c;
+    --azul-claro:#e4ecff;
+    --accent:#ffc857;
+    --accent-soft:#ffe7a4;
+    --fundo:#f4f6fb;
+    --branco:#ffffff;
+    --texto:#263238;
+    --sucesso:#2ecc71;
+    --erro:#e74c3c;
+    --bordas:#dde3f0;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI",system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
+body{
+    background:var(--fundo);
+    color:var(--texto);
+    min-height:100vh;
+    display:flex;
+}
+
+.fade-in{
+    animation:fadeIn .45s ease-out;
+}
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(10px);}
+    to{opacity:1;transform:translateY(0);}
+}
+
+/* LOGIN OVERLAY */
+#login-overlay{
+    position:fixed;
+    inset:0;
+    background:linear-gradient(135deg,var(--azul-escuro),var(--azul-medio));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:999;
+    color:var(--branco);
+}
+
+.login-card{
+    background:rgba(15,23,42,.95);
+    border-radius:20px;
+    padding:22px 22px 18px;
+    width:100%;
+    max-width:380px;
+    box-shadow:0 18px 35px rgba(0,0,0,.45);
+    border:1px solid rgba(148,163,184,.5);
+}
+
+.login-card h1{
+    font-size:20px;
+    margin-bottom:4px;
+}
+
+.login-card p{
+    font-size:12px;
+    color:#e2e8f0;
+    margin-bottom:12px;
+}
+
+.login-group{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    margin-bottom:10px;
+}
+.login-group label{
+    font-size:12px;
+}
+.login-group input{
+    padding:8px 10px;
+    border-radius:999px;
+    border:1px solid rgba(148,163,184,.6);
+    background:rgba(15,23,42,.9);
+    color:var(--branco);
+    font-size:13px;
+}
+.login-group input:focus{
+    outline:none;
+    border-color:var(--accent);
+    box-shadow:0 0 0 1px rgba(255,200,87,.6);
+}
+.login-btn{
+    width:100%;
+    border:none;
+    border-radius:999px;
+    padding:9px 0;
+    margin-top:6px;
+    background:var(--accent);
+    color:#111827;
+    font-weight:600;
+    cursor:pointer;
+    font-size:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+}
+.login-btn:hover{
+    filter:brightness(1.05);
+}
+.login-alert{
+    font-size:12px;
+    margin-top:6px;
+}
+.login-alert.err{color:#fecaca;}
+.login-alert.ok{color:#bbf7d0;}
+
+/* SIDEBAR */
+.sidebar{
+    width:270px;
+    background:linear-gradient(160deg,var(--azul-escuro),var(--azul-medio));
+    color:var(--branco);
+    display:flex;
+    flex-direction:column;
+    padding:18px 18px 12px;
+    position:sticky;
+    top:0;
+    height:100vh;
+    box-shadow:4px 0 18px rgba(0,0,0,.25);
+    z-index:20;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:24px;
+}
+.brand-logo{
+    width:44px;
+    height:44px;
+    border-radius:16px;
+    background:radial-gradient(circle at 20% 20%,var(--accent),var(--azul-escuro));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--branco);
+    font-size:22px;
+    box-shadow:0 0 0 2px rgba(255,255,255,.25);
+}
+.brand-text h1{
+    font-size:18px;
+    letter-spacing:.03em;
+}
+.brand-text span{
+    font-size:12px;
+    color:var(--accent-soft);
+}
+
+/* menu */
+.menu{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    margin-bottom:auto;
+}
+.menu-btn{
+    border:none;
+    background:transparent;
+    color:rgba(255,255,255,.85);
+    padding:10px 12px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:14px;
+    cursor:pointer;
+    transition:.25s ease;
+    opacity:.95;
+}
+.menu-btn i{width:18px;text-align:center;}
+.menu-btn span{flex:1;text-align:left;}
+.menu-btn:hover{
+    background:rgba(255,255,255,.08);
+    transform:translateX(2px);
+}
+.menu-btn.active{
+    background:rgba(255,255,255,.18);
+    color:var(--accent);
+    box-shadow:0 0 0 1px rgba(255,255,255,.15);
+}
+.menu-btn.hidden{
+    display:none;
+}
+
+.sidebar-footer{
+    margin-top:16px;
+    padding-top:10px;
+    border-top:1px solid rgba(255,255,255,.12);
+    font-size:11px;
+    color:rgba(255,255,255,.6);
+}
+
+/* MAIN */
+.main{
+    flex:1;
+    padding:18px 22px 26px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+
+.topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+}
+.topbar-left h2{
+    font-size:20px;
+    margin-bottom:2px;
+}
+.topbar-left span{
+    font-size:12px;
+    color:#789;
+}
+.badge-pill{
+    padding:4px 10px;
+    border-radius:999px;
+    font-size:11px;
+    background:var(--azul-claro);
+    color:var(--azul-escuro);
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+}
+
+/* DASHBOARD CARDS */
+.cards-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:14px;
+}
+.card{
+    background:var(--branco);
+    border-radius:18px;
+    padding:14px 14px 12px;
+    box-shadow:0 10px 25px rgba(15,23,42,.06);
+    border:1px solid rgba(148,163,184,.28);
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    position:relative;
+    overflow:hidden;
+}
+.card::before{
+    content:"";
+    position:absolute;
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    background:radial-gradient(circle at 30% 20%,rgba(255,200,87,.5),transparent);
+    top:-40px;
+    right:-40px;
+    opacity:.35;
+}
+.card-title{
+    font-size:13px;
+    color:#64748b;
+}
+.card-value{
+    font-size:22px;
+    font-weight:600;
+    color:var(--azul-escuro);
+}
+.card-sub{
+    font-size:11px;
+    color:#94a3b8;
+}
+.card-icon{
+    position:absolute;
+    bottom:10px;
+    right:12px;
+    font-size:20px;
+    color:rgba(148,163,184,.9);
+}
+
+/* SEÇÕES */
+.sections{
+    margin-top:4px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+.section{display:none;}
+.section.active{display:block;}
+
+.section-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:8px;
+}
+.section-header h3{
+    font-size:17px;
+}
+.section-header span{
+    font-size:12px;
+    color:#789;
+}
+
+.panel{
+    background:var(--branco);
+    border-radius:18px;
+    padding:14px 16px;
+    box-shadow:0 10px 25px rgba(15,23,42,.06);
+    border:1px solid rgba(148,163,184,.26);
+    margin-bottom:10px;
+}
+
+/* FORMULÁRIOS */
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:10px 16px;
+}
+.form-group{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    font-size:13px;
+}
+.form-group label{
+    color:#64748b;
+}
+input[type="text"],
+input[type="date"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+select{
+    padding:8px 10px;
+    border-radius:10px;
+    border:1px solid var(--bordas);
+    font-size:13px;
+    outline:none;
+    transition:.22s ease;
+    background:#f9fafb;
+}
+input:focus,
+select:focus{
+    border-color:var(--azul-medio);
+    box-shadow:0 0 0 1px rgba(37,99,235,.15);
+    background:var(--branco);
+}
+.btn-primary{
+    border:none;
+    padding:9px 16px;
+    border-radius:999px;
+    background:var(--azul-medio);
+    color:var(--branco);
+    font-size:13px;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    cursor:pointer;
+    margin-top:4px;
+    transition:.25s ease;
+}
+.btn-primary i{font-size:13px;}
+.btn-primary:hover{
+    background:var(--azul-escuro);
+    transform:translateY(-1px);
+    box-shadow:0 8px 18px rgba(15,23,42,.35);
+}
+.btn-secondary{
+    border:none;
+    padding:7px 12px;
+    border-radius:999px;
+    background:#e2e8f0;
+    color:#334155;
+    font-size:11px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    transition:.2s ease;
+}
+.btn-secondary:hover{
+    background:#cbd5e1;
+}
+
+/* TABELAS */
+.table-wrapper{
+    margin-top:8px;
+    border-radius:14px;
+    border:1px solid var(--bordas);
+    overflow:hidden;
+    background:linear-gradient(to bottom,#f9fafb,var(--branco));
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:12px;
+}
+thead{background:#e2e8f0;}
+th,td{
+    padding:8px 10px;
+    text-align:left;
+    border-bottom:1px solid #e5e7eb;
+}
+tbody tr:nth-child(even){background:#f8fafc;}
+
+.alert{
+    font-size:12px;
+    margin-top:6px;
+}
+.alert.ok{color:var(--sucesso);}
+.alert.err{color:var(--erro);}
+
+.report-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:12px;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width:1024px){
+    .cards-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .form-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media (max-width:780px){
+    body{flex-direction:column;}
+    .sidebar{
+        position:relative;
+        width:100%;
+        height:auto;
+        flex-direction:row;
+        align-items:center;
+        padding:10px 14px;
+        box-shadow:0 4px 20px rgba(15,23,42,.4);
+    }
+    .brand{margin-bottom:0;}
+    .menu{
+        flex-direction:row;
+        overflow-x:auto;
+        padding-bottom:4px;
+    }
+    .menu-btn span{display:none;}
+    .main{padding:14px 14px 20px;}
+    .cards-grid{grid-template-columns:1fr 1fr;}
+    .form-grid{grid-template-columns:1fr;}
+    .report-grid{grid-template-columns:1fr;}
+}
+@media (max-width:480px){
+    .cards-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-overlay">
+    <div class="login-card">
+        <h1>NRE Digital</h1>
+        <p>Faça login com seu e-mail institucional para acessar a secretaria digital.</p>
+        <form id="form-login">
+            <div class="login-group">
+                <label for="login-email">E-mail</label>
+                <input type="email" id="login-email" placeholder="ex: secretaria@nre.com" required>
+            </div>
+            <div class="login-group">
+                <label for="login-senha">Senha</label>
+                <input type="password" id="login-senha" placeholder="Digite sua senha" required>
+            </div>
+            <button class="login-btn" type="submit">
+                <i class="fa-solid fa-right-to-bracket"></i> Entrar
+            </button>
+            <div id="login-alert" class="login-alert"></div>
+            <p style="font-size:11px;margin-top:10px;color:#cbd5f5;">
+                Primeiro acesso? Use <strong>diretora@nre.com</strong> / <strong>123456</strong> para criar a conta da direção.
+            </p>
+        </form>
+    </div>
+</div>
+
+<!-- APP -->
+<aside class="sidebar" id="app-sidebar" style="display:none;">
+    <div class="brand">
+        <div class="brand-logo">
+            <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div class="brand-text">
+            <h1>NRE Digital</h1>
+            <span>Secretaria Escolar Inteligente</span>
+        </div>
+    </div>
+
+    <nav class="menu">
+        <button class="menu-btn active" data-target="dashboard">
+            <i class="fa-solid fa-chart-pie"></i><span>Visão geral</span>
+        </button>
+        <button class="menu-btn" data-target="turmas" id="menu-turmas">
+            <i class="fa-solid fa-people-roof"></i><span>Turmas</span>
+        </button>
+        <button class="menu-btn" data-target="alunos" id="menu-alunos">
+            <i class="fa-solid fa-user-graduate"></i><span>Alunos</span>
+        </button>
+        <button class="menu-btn" data-target="professores" id="menu-professores">
+            <i class="fa-solid fa-chalkboard-user"></i><span>Professores</span>
+        </button>
+        <button class="menu-btn" data-target="docs" id="menu-docs">
+            <i class="fa-solid fa-folder-open"></i><span>Documentos</span>
+        </button>
+        <button class="menu-btn" data-target="relatorios" id="menu-rel">
+            <i class="fa-solid fa-file-lines"></i><span>Relatórios</span>
+        </button>
+        <button class="menu-btn" data-target="usuarios" id="menu-usuarios">
+            <i class="fa-solid fa-user-gear"></i><span>Funcionários</span>
+        </button>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div id="footer-usuario"><i class="fa-regular fa-circle-user"></i> Não conectado</div>
+        <div style="margin-top:4px;cursor:pointer;" id="btn-logout">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
+        </div>
+    </div>
+</aside>
+
+<main class="main" id="app-main" style="display:none;">
+    <header class="topbar">
+        <div class="topbar-left">
+            <h2>Bem-vindo à Secretaria Digital</h2>
+            <span>Gerencie alunos, turmas, professores e documentos com segurança.</span>
+        </div>
+        <div class="badge-pill" id="badge-role">
+            <i class="fa-solid fa-shield-halved"></i>
+            Acesso: -
+        </div>
+    </header>
+
+    <!-- DASHBOARD CARDS -->
+    <section class="cards-grid fade-in" id="cards-dashboard">
+        <article class="card">
+            <div class="card-title">Alunos cadastrados</div>
+            <div class="card-value" id="card-total-alunos">0</div>
+            <div class="card-sub">Total geral no sistema</div>
+            <i class="fa-solid fa-user-graduate card-icon"></i>
+        </article>
+
+        <article class="card">
+            <div class="card-title">Turmas ativas</div>
+            <div class="card-value" id="card-total-turmas">0</div>
+            <div class="card-sub">Organizadas por série e turno</div>
+            <i class="fa-solid fa-people-line card-icon"></i>
+        </article>
+
+        <article class="card">
+            <div class="card-title">Documentos anexados</div>
+            <div class="card-value" id="card-total-docs">0</div>
+            <div class="card-sub">Históricos, SEPI, declarações...</div>
+            <i class="fa-solid fa-folder-tree card-icon"></i>
+        </article>
+
+        <article class="card">
+            <div class="card-title">Dados sensíveis</div>
+            <div class="card-value" id="card-total-sensiveis">0</div>
+            <div class="card-sub">Controle de acesso reforçado</div>
+            <i class="fa-solid fa-lock card-icon"></i>
+        </article>
+    </section>
+
+    <section class="sections">
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="section active fade-in">
+            <div class="section-header">
+                <h3>Resumo geral</h3>
+                <span>Visão rápida dos cadastros.</span>
+            </div>
+            <div class="panel">
+                <p style="font-size:13px;color:#64748b;line-height:1.6;">
+                    Use o menu lateral para navegar entre <strong>Turmas</strong>, <strong>Alunos</strong>,
+                    <strong>Professores</strong> e <strong>Documentos</strong>. Os números do painel acima
+                    são alimentados diretamente do banco de dados em nuvem (Firebase Firestore), permitindo
+                    que a secretaria e a direção acompanhem o movimento em tempo real.
+                </p>
+            </div>
+        </section>
+
+        <!-- TURMAS -->
+        <section id="turmas" class="section fade-in">
+            <div class="section-header">
+                <h3>Cadastro de turmas</h3>
+                <span>Direção e NRE podem criar e organizar as turmas.</span>
+            </div>
+            <div class="panel">
+                <form id="form-turma">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Código da turma</label>
+                            <input type="text" id="turma-codigo" placeholder="Ex: 9º A Manhã">
+                        </div>
+                        <div class="form-group">
+                            <label>Série</label>
+                            <input type="text" id="turma-serie" placeholder="Ex: 9º ano">
+                        </div>
+                        <div class="form-group">
+                            <label>Turno</label>
+                            <select id="turma-turno">
+                                <option value="">Selecione...</option>
+                                <option>Manhã</option>
+                                <option>Tarde</option>
+                                <option>Noite</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fa-solid fa-plus"></i> Salvar turma
+                    </button>
+                    <div id="alert-turma" class="alert"></div>
+                </form>
+
+                <div class="table-wrapper" style="margin-top:14px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Série</th>
+                                <th>Turno</th>
+                                <th>Qtd. alunos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-turmas"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ALUNOS -->
+        <section id="alunos" class="section fade-in">
+            <div class="section-header">
+                <h3>Cadastro de alunos</h3>
+                <span>Secretaria registra os alunos nas turmas.</span>
+            </div>
+            <div class="panel">
+                <form id="form-aluno">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>RA do aluno</label>
+                            <input type="text" id="aluno-ra" placeholder="Registro acadêmico">
+                        </div>
+                        <div class="form-group">
+                            <label>Nome completo</label>
+                            <input type="text" id="aluno-nome" placeholder="Nome do aluno">
+                        </div>
+                        <div class="form-group">
+                            <label>Data de nascimento</label>
+                            <input type="date" id="aluno-nasc">
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone</label>
+                            <input type="text" id="aluno-telefone" placeholder="(00) 00000-0000">
+                        </div>
+                        <div class="form-group">
+                            <label>Responsável principal</label>
+                            <input type="text" id="aluno-responsavel" placeholder="Nome do responsável">
+                        </div>
+                        <div class="form-group">
+                            <label>Turma</label>
+                            <select id="aluno-turma">
+                                <option value="">Selecione a turma...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fa-solid fa-user-plus"></i> Salvar aluno
+                    </button>
+                    <div id="alert-aluno" class="alert"></div>
+                </form>
+
+                <div class="table-wrapper" style="margin-top:14px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>RA</th>
+                                <th>Nome</th>
+                                <th>Turma</th>
+                                <th>Responsável</th>
+                                <th>Tel.</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-alunos"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROFESSORES -->
+        <section id="professores" class="section fade-in">
+            <div class="section-header">
+                <h3>Cadastro de professores</h3>
+                <span>Direção/NRE definem disciplina e vínculo com turmas.</span>
+            </div>
+            <div class="panel">
+                <form id="form-prof">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nome do professor</label>
+                            <input type="text" id="prof-nome" placeholder="Nome completo">
+                        </div>
+                        <div class="form-group">
+                            <label>Disciplina</label>
+                            <input type="text" id="prof-disc" placeholder="Ex: Matemática">
+                        </div>
+                        <div class="form-group">
+                            <label>Turma (principal)</label>
+                            <select id="prof-turma">
+                                <option value="">Selecione a turma...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fa-solid fa-chalkboard-user"></i> Salvar professor
+                    </button>
+                    <div id="alert-prof" class="alert"></div>
+                </form>
+
+                <div class="table-wrapper" style="margin-top:14px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Disciplina</th>
+                                <th>Turma</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-professores"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- DOCUMENTOS -->
+        <section id="docs" class="section fade-in">
+            <div class="section-header">
+                <h3>Documentos do aluno</h3>
+                <span>Histórico, SEPI, certidão e outros.</span>
+            </div>
+
+            <div class="panel">
+                <form id="form-doc">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Aluno</label>
+                            <select id="doc-aluno">
+                                <option value="">Selecione o aluno...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo de documento</label>
+                            <select id="doc-tipo">
+                                <option value="">Selecione...</option>
+                                <option>Histórico escolar</option>
+                                <option>SEPI</option>
+                                <option>Certidão de nascimento</option>
+                                <option>Declaração de matrícula</option>
+                                <option>Outro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Data de cadastro</label>
+                            <input type="date" id="doc-data">
+                        </div>
+                        <div class="form-group">
+                            <label>Link / referência</label>
+                            <input type="text" id="doc-caminho" placeholder="Ex: pasta física ou link interno">
+                        </div>
+                        <div class="form-group">
+                            <label>Dado sensível?</label>
+                            <select id="doc-sensivel">
+                                <option value="">Selecione...</option>
+                                <option value="true">Sim</option>
+                                <option value="false">Não</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fa-solid fa-folder-plus"></i> Anexar documento
+                    </button>
+                    <div id="alert-doc" class="alert"></div>
+                </form>
+
+                <div class="table-wrapper" style="margin-top:14px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Aluno</th>
+                                <th>Tipo</th>
+                                <th>Data</th>
+                                <th>Sensível</th>
+                                <th>Referência</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-docs"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- RELATÓRIOS -->
+        <section id="relatorios" class="section fade-in">
+            <div class="section-header">
+                <h3>Relatórios rápidos</h3>
+                <span>Resumo por turma e documentos.</span>
+            </div>
+
+            <div class="panel">
+                <div class="report-grid">
+                    <div>
+                        <h4 style="font-size:14px;margin-bottom:6px;">Alunos por turma</h4>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Turma</th>
+                                        <th>Série</th>
+                                        <th>Turno</th>
+                                        <th>Qtd. alunos</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-rel-turmas"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="font-size:14px;margin-bottom:6px;">Documentos por tipo</h4>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th>Quantidade</th>
+                                        <th>Sensíveis</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-rel-docs"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-secondary" id="btn-atualizar-rel">
+                    <i class="fa-solid fa-rotate"></i> Atualizar relatórios
+                </button>
+            </div>
+        </section>
+
+        <!-- USUÁRIOS/FUNCIONÁRIOS -->
+        <section id="usuarios" class="section fade-in">
+            <div class="section-header">
+                <h3>Funcionários do sistema</h3>
+                <span>Direção/NRE gerenciam acessos e cargos.</span>
+            </div>
+
+            <div class="panel">
+                <form id="form-usuario">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nome</label>
+                            <input type="text" id="user-nome" placeholder="Nome completo">
+                        </div>
+                        <div class="form-group">
+                            <label>E-mail</label>
+                            <input type="email" id="user-email" placeholder="email@institucional">
+                        </div>
+                        <div class="form-group">
+                            <label>Senha</label>
+                            <input type="password" id="user-senha" placeholder="Senha simples para teste">
+                        </div>
+                        <div class="form-group">
+                            <label>Cargo / Perfil de acesso</label>
+                            <select id="user-cargo">
+                                <option value="">Selecione...</option>
+                                <option value="SECRETARIA">Secretaria</option>
+                                <option value="DIRECAO">Direção</option>
+                                <option value="NRE">NRE</option>
+                                <option value="PROFESSOR">Professor</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fa-solid fa-user-gear"></i> Cadastrar funcionário
+                    </button>
+                    <div id="alert-usuario" class="alert"></div>
+                </form>
+
+                <div class="table-wrapper" style="margin-top:14px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>E-mail</th>
+                                <th>Cargo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-usuarios"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </section>
+</main>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
+<script>
+// CONFIG DO SEU PROJETO
+const firebaseConfig = {
+  apiKey: "AIzaSyCQjN0SWOl907VB91YoOg93JZBd4F9PlKs",
+  authDomain: "nre-sistemy.firebaseapp.com",
+  databaseURL: "https://nre-sistemy-default-rtdb.firebaseio.com",
+  projectId: "nre-sistemy",
+  storageBucket: "nre-sistemy.firebasestorage.app",
+  messagingSenderId: "372027331060",
+  appId: "1:372027331060:web:39c1cf79bb282ab512e9a1",
+  measurementId: "G-SG48SZ55YY"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// estado
+let currentUser = null;
+let turmas = [];
+let alunos = [];
+let professores = [];
+let documentos = [];
+let usuarios = [];
+
+// helpers
+function setAlert(el, msg, ok=true){
+    el.textContent = msg;
+    el.className = "alert " + (ok ? "ok" : "err");
+    if(msg){
+        setTimeout(()=>{ el.textContent=""; }, 2500);
+    }
+}
+
+function atualizarDashboard(){
+    document.getElementById("card-total-turmas").textContent = turmas.length;
+    document.getElementById("card-total-alunos").textContent = alunos.length;
+    document.getElementById("card-total-docs").textContent = documentos.length;
+    const sensiveis = documentos.filter(d=>d.sensivel).length;
+    document.getElementById("card-total-sensiveis").textContent = sensiveis;
+}
+
+// permissões
+function hasRole(...roles){
+    if(!currentUser) return false;
+    return roles.includes(currentUser.cargo);
+}
+
+// mostra/esconde menus conforme perfil
+function aplicarPermissoesUI(){
+    const role = currentUser?.cargo || "-";
+
+    document.getElementById("badge-role").innerHTML =
+        `<i class="fa-solid fa-shield-halved"></i> Acesso: ${role}`;
+
+    document.getElementById("footer-usuario").innerHTML =
+        `<i class="fa-regular fa-circle-user"></i> ${currentUser.nome} (${role})`;
+
+    // menu turmas: DIRECAO, NRE e SECRETARIA podem ver, mas só DIRECAO/NRE criam
+    document.getElementById("menu-turmas").classList.remove("hidden");
+
+    // menu alunos: SECRETARIA, DIRECAO, NRE, PROFESSOR
+    document.getElementById("menu-alunos").classList.remove("hidden");
+
+    // menu professores: DIRECAO, NRE podem gerenciar; SECRETARIA/PROFESSOR podem visualizar
+    document.getElementById("menu-professores").classList.remove("hidden");
+
+    // documentos e relatórios: todos logados
+    document.getElementById("menu-docs").classList.remove("hidden");
+    document.getElementById("menu-rel").classList.remove("hidden");
+
+    // funcionários: só DIRECAO e NRE
+    if(hasRole("DIRECAO","NRE")){
+        document.getElementById("menu-usuarios").classList.remove("hidden");
+    }else{
+        document.getElementById("menu-usuarios").classList.add("hidden");
+    }
+
+    // desabilitar visualmente botões de cadastro se não tiver permissão
+    const turmaBtn = document.querySelector("#form-turma .btn-primary");
+    turmaBtn.disabled = !hasRole("DIRECAO","NRE","SECRETARIA"); // pode também SECRETARIA, se quiser
+    turmaBtn.style.opacity = turmaBtn.disabled ? .5 : 1;
+
+    const alunoBtn = document.querySelector("#form-aluno .btn-primary");
+    alunoBtn.disabled = !hasRole("SECRETARIA","DIRECAO","NRE");
+    alunoBtn.style.opacity = alunoBtn.disabled ? .5 : 1;
+
+    const profBtn = document.querySelector("#form-prof .btn-primary");
+    profBtn.disabled = !hasRole("DIRECAO","NRE");
+    profBtn.style.opacity = profBtn.disabled ? .5 : 1;
+
+    const docBtn = document.querySelector("#form-doc .btn-primary");
+    docBtn.disabled = !hasRole("SECRETARIA","DIRECAO","NRE","PROFESSOR");
+    docBtn.style.opacity = docBtn.disabled ? .5 : 1;
+
+    const userBtn = document.querySelector("#form-usuario .btn-primary");
+    userBtn.disabled = !hasRole("DIRECAO","NRE");
+    userBtn.style.opacity = userBtn.disabled ? .5 : 1;
+}
+
+// selects
+function atualizarSelectTurmas(){
+    const selAlunoTurma = document.getElementById("aluno-turma");
+    const selProfTurma = document.getElementById("prof-turma");
+
+    selAlunoTurma.innerHTML = '<option value="">Selecione a turma...</option>';
+    selProfTurma.innerHTML = '<option value="">Selecione a turma...</option>';
+
+    turmas.forEach(t=>{
+        const opt1 = document.createElement("option");
+        opt1.value = t.id;
+        opt1.textContent = `${t.codigo} (${t.serie})`;
+        selAlunoTurma.appendChild(opt1);
+
+        const opt2 = document.createElement("option");
+        opt2.value = t.id;
+        opt2.textContent = `${t.codigo} (${t.serie})`;
+        selProfTurma.appendChild(opt2);
+    });
+}
+
+function atualizarSelectAlunos(){
+    const selDocAluno = document.getElementById("doc-aluno");
+    selDocAluno.innerHTML = '<option value="">Selecione o aluno...</option>';
+    alunos.forEach(a=>{
+        const turma = turmas.find(t=>t.id===a.turmaId);
+        const opt = document.createElement("option");
+        opt.value = a.id;
+        opt.textContent = `${a.nome} - ${turma ? turma.codigo : "Sem turma"}`;
+        selDocAluno.appendChild(opt);
+    });
+}
+
+// render tabelas
+function renderTurmas(){
+    const tbody = document.getElementById("tbody-turmas");
+    tbody.innerHTML = "";
+    turmas.forEach(t=>{
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${t.codigo}</td>
+            <td>${t.serie}</td>
+            <td>${t.turno}</td>
+            <td>${t.qtdAlunos || 0}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+    atualizarDashboard();
+}
+
+function renderAlunos(){
+    const tbody = document.getElementById("tbody-alunos");
+    tbody.innerHTML = "";
+    alunos.forEach(a=>{
+        const turma = turmas.find(t=>t.id===a.turmaId);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${a.ra}</td>
+            <td>${a.nome}</td>
+            <td>${turma ? turma.codigo : "-"}</td>
+            <td>${a.resp || "-"}</td>
+            <td>${a.tel || "-"}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+    atualizarDashboard();
+}
+
+function renderProfessores(){
+    const tbody = document.getElementById("tbody-professores");
+    tbody.innerHTML = "";
+    professores.forEach(p=>{
+        const turma = turmas.find(t=>t.id===p.turmaId);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${p.nome}</td>
+            <td>${p.disciplina}</td>
+            <td>${turma ? turma.codigo : "-"}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function renderDocs(){
+    const tbody = document.getElementById("tbody-docs");
+    tbody.innerHTML = "";
+    documentos.forEach(d=>{
+        const aluno = alunos.find(a=>a.id===d.alunoId);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${aluno ? aluno.nome : "-"}</td>
+            <td>${d.tipo}</td>
+            <td>${d.data || "-"}</td>
+            <td>${d.sensivel ? "Sim" : "Não"}</td>
+            <td>${d.caminho || "-"}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+    atualizarDashboard();
+}
+
+function renderUsuarios(){
+    const tbody = document.getElementById("tbody-usuarios");
+    tbody.innerHTML = "";
+    usuarios.forEach(u=>{
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${u.nome}</td>
+            <td>${u.email}</td>
+            <td>${u.cargo}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// relatórios
+function renderRelatorios(){
+    const tbodyTurmas = document.getElementById("tbody-rel-turmas");
+    tbodyTurmas.innerHTML = "";
+    turmas.forEach(t=>{
+        const qtd = alunos.filter(a=>a.turmaId===t.id).length;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${t.codigo}</td>
+            <td>${t.serie}</td>
+            <td>${t.turno}</td>
+            <td>${qtd}</td>
+        `;
+        tbodyTurmas.appendChild(tr);
+    });
+
+    const tbodyDocs = document.getElementById("tbody-rel-docs");
+    tbodyDocs.innerHTML = "";
+    const agrupado = {};
+    documentos.forEach(d=>{
+        if(!agrupado[d.tipo]){
+            agrupado[d.tipo] = {total:0,sensiveis:0};
+        }
+        agrupado[d.tipo].total++;
+        if(d.sensivel) agrupado[d.tipo].sensiveis++;
+    });
+    Object.keys(agrupado).forEach(tipo=>{
+        const info = agrupado[tipo];
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${tipo}</td>
+            <td>${info.total}</td>
+            <td>${info.sensiveis}</td>
+        `;
+        tbodyDocs.appendChild(tr);
+    });
+}
+
+// carregamento do banco
+async function carregarTurmas(){
+    const snap = await db.collection("turmas").get();
+    turmas = [];
+    snap.forEach(doc=>{
+        turmas.push({id:doc.id, ...doc.data()});
+    });
+    renderTurmas();
+    atualizarSelectTurmas();
+    renderRelatorios();
+}
+
+async function carregarAlunos(){
+    const snap = await db.collection("alunos").get();
+    alunos = [];
+    snap.forEach(doc=>{
+        alunos.push({id:doc.id, ...doc.data()});
+    });
+    renderAlunos();
+    atualizarSelectAlunos();
+    renderDocs();
+    renderRelatorios();
+}
+
+async function carregarProfessores(){
+    const snap = await db.collection("professores").get();
+    professores = [];
+    snap.forEach(doc=>{
+        professores.push({id:doc.id, ...doc.data()});
+    });
+    renderProfessores();
+}
+
+async function carregarDocs(){
+    const snap = await db.collection("documentos").get();
+    documentos = [];
+    snap.forEach(doc=>{
+        documentos.push({id:doc.id, ...doc.data()});
+    });
+    renderDocs();
+    renderRelatorios();
+}
+
+async function carregarUsuarios(){
+    const snap = await db.collection("usuarios").get();
+    usuarios = [];
+    snap.forEach(doc=>{
+        usuarios.push({id:doc.id, ...doc.data()});
+    });
+    renderUsuarios();
+}
+
+// LOGIN
+document.getElementById("form-login").addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    const email = document.getElementById("login-email").value.trim();
+    const senha = document.getElementById("login-senha").value.trim();
+    const alertEl = document.getElementById("login-alert");
+
+    if(!email || !senha){
+        alertEl.textContent = "Preencha e-mail e senha.";
+        alertEl.className = "login-alert err";
+        return;
+    }
+
+    try{
+        const snap = await db.collection("usuarios").where("email","==",email).limit(1).get();
+        if(snap.empty){
+            // se for primeira vez diretora
+            if(email === "diretora@nre.com" && senha === "123456"){
+                const docRef = await db.collection("usuarios").add({
+                    nome:"Diretora",
+                    email,
+                    senha,
+                    cargo:"DIRECAO"
+                });
+                currentUser = {id:docRef.id, nome:"Diretora", email, senha, cargo:"DIRECAO"};
+                alertEl.textContent = "Usuária direção criada e logada com sucesso.";
+                alertEl.className = "login-alert ok";
+            }else{
+                alertEl.textContent = "Usuário não encontrado.";
+                alertEl.className = "login-alert err";
+                return;
+            }
+        }else{
+            const doc = snap.docs[0];
+            const data = doc.data();
+            if(data.senha !== senha){
+                alertEl.textContent = "Senha incorreta.";
+                alertEl.className = "login-alert err";
+                return;
+            }
+            currentUser = {id:doc.id, ...data};
+            alertEl.textContent = "Login realizado.";
+            alertEl.className = "login-alert ok";
+        }
+
+        // mostrar app
+        document.getElementById("login-overlay").style.display = "none";
+        document.getElementById("app-sidebar").style.display = "flex";
+        document.getElementById("app-main").style.display = "flex";
+
+        aplicarPermissoesUI();
+
+        // carregar dados
+        await Promise.all([
+            carregarTurmas(),
+            carregarAlunos(),
+            carregarProfessores(),
+            carregarDocs(),
+            carregarUsuarios()
+        ]);
+    }catch(err){
+        console.error(err);
+        alertEl.textContent = "Erro ao conectar no banco.";
+        alertEl.className = "login-alert err";
+    }
+});
+
+document.getElementById("btn-logout").addEventListener("click", ()=>{
+    currentUser = null;
+    location.reload();
+});
+
+// NAVEGAÇÃO
+const menuButtons = document.querySelectorAll(".menu-btn");
+const sections = document.querySelectorAll(".section");
+menuButtons.forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+        const target = btn.getAttribute("data-target");
+        menuButtons.forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
+        sections.forEach(sec=>{
+            sec.classList.toggle("active", sec.id===target);
+        });
+    });
+});
+
+// FORM TURMA
+document.getElementById("form-turma").addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    const alertEl = document.getElementById("alert-turma");
+
+    if(!hasRole("DIRECAO","NRE","SECRETARIA")){
+        setAlert(alertEl,"Você não tem permissão para cadastrar turmas.",false);
+        return;
+    }
+
+    const codigo = document.getElementById("turma-codigo").value.trim();
+    const serie  = document.getElementById("turma-serie").value.trim();
+    const turno  = document.getElementById("turma-turno").value;
+
+    if(!codigo || !serie || !turno){
+        setAlert(alertEl,"Preencha todos os campos.",false);
+        return;
+    }
+
+    try{
+        await db.collection("turmas").add({
+            codigo, serie, turno, qtdAlunos:0
+        });
+        document.getElementById("turma-codigo").value = "";
+        document.getElementById("turma-serie").value = "";
+        document.getElementById("turma-turno").value = "";
+
+        await carregarTurmas();
+        setAlert(alertEl,"Turma cadastrada com sucesso!");
+    }catch(err){
+        console.error(err);
+        setAlert(alertEl,"Erro ao salvar turma.",false);
+    }
+});
+
+// FORM ALUNO
+document.getElementById("form-aluno").addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    const alertEl = document.getElementById("alert-aluno");
+
+    if(!hasRole("SECRETARIA","DIRECAO","NRE")){
+        setAlert(alertEl,"Você não tem permissão para cadastrar alunos.",false);
+        return;
+    }
+
+    const ra  = document.getElementById("aluno-ra").value.trim();
+    const nome= document.getElementById("aluno-nome").value.trim();
+    const nasc= document.getElementById("aluno-nasc").value;
+    const tel = document.getElementById("aluno-telefone").value.trim();
+    const resp= document.getElementById("aluno-responsavel").value.trim();
+    const turmaId = document.getElementById("aluno-turma").value;
+
+    if(!ra || !nome || !turmaId){
+        setAlert(alertEl,"RA, nome e turma são obrigatórios.",false);
+        return;
+    }
+
+    try{
+        await db.collection("alunos").add({
+            ra, nome, nasc, tel, resp, turmaId
+        });
+        document.getElementById("aluno-ra").value="";
+        document.getElementById("aluno-nome").value="";
+        document.getElementById("aluno-nasc").value="";
+        document.getElementById("aluno-telefone").value="";
+        document.getElementById("aluno-responsavel").value="";
+        document.getElementById("aluno-turma").value="";
+
+        await carregarAlunos();
+        setAlert(alertEl,"Aluno cadastrado com sucesso!");
+    }catch(err){
+        console.error(err);
+        setAlert(alertEl,"Erro ao salvar aluno.",false);
+    }
+});
+
+// FORM PROFESSOR
+document.getElementById("form-prof").addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    const alertEl = document.getElementById("alert-prof");
+
+    if(!hasRole("DIRECAO","NRE")){
+        setAlert(alertEl,"Apenas direção/NRE podem cadastrar professores.",false);
+        return;
+    }
+
+    const nome = document.getElementById("prof-nome").value.trim();
+    const disc = document.getElementById("prof-disc").value.trim();
+    const turmaId = document.getElementById("prof-turma").value;
+
+    if(!nome || !disc){
+        setAlert(alertEl,"Nome e disciplina são obrigatórios.",false);
+        return;
+    }
+
+    try{
+        await db.collection("professores").add({
+            nome,
+            disciplina:disc,
+            turmaId: turmaId || null
+        });
+        document.getElementById("prof-nome").value="";
+        document.getElementById("prof-disc").value="";
+        document.getElementById("prof-turma").value="";
+
+        await carregarProfessores();
+        setAlert(alertEl,"Professor cadastrado com sucesso!");
+    }catch(err){
+        console.error(err);
+        setAlert(alertEl,"Erro ao salvar professor.",false);
+    }
+});
+
+// FORM DOCUMENTO
+document.getElementById("form-doc").addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    const alertEl = document.getElementById("alert-doc");
+
+    if(!hasRole("SECRETARIA","DIRECAO","NRE","PROFESSOR")){
+        setAlert(alertEl,"Você não tem permissão para cadastrar documentos.",false);
+        return;
+    }
+
+    const alunoId = document.getElementById("doc-aluno").value;
+    const tipo = document.getElementById("doc-tipo").value;
+    const data = document.getElementById("doc-data").value;
+    const caminho = document.getElementById("doc-caminho").value.trim();
+    const sensivelValue = document.getElementById("doc-sensivel").value;
+
+    if(!alunoId || !tipo || !sensivelValue){
+        setAlert(alertEl,"Aluno, tipo e sensível são obrigatórios.",false);
+        return;
+    }
+    const sensivel = sensivelValue === "true";
+
+    try{
+        await db.collection("documentos").add({
+            alunoId, tipo, data, caminho, sensivel
+        });
+        document.getElementById("doc-aluno").value="";
+        document.getElementById("doc-tipo").value="";
+        document.getElementById("doc-data").value="";
+        document.getElementById("doc-caminho").value="";
+        document.getElementById("doc-sensivel").value="";
+
+        await carregarDocs();
+        setAlert(alertEl,"Documento anexado com sucesso!");
+    }catch(err){
+        console.error(err);
+        setAlert(alertEl,"Erro ao salvar documento.",false);
+    }
+});
+
+// FORM USUÁRIOS
+document.getElementById("form-usuario").addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    const alertEl = document.getElementById("alert-usuario");
+
+    if(!hasRole("DIRECAO","NRE")){
+        setAlert(alertEl,"Apenas direção/NRE podem gerenciar funcionários.",false);
+        return;
+    }
+
+    const nome = document.getElementById("user-nome").value.trim();
+    const email = document.getElementById("user-email").value.trim();
+    const senha = document.getElementById("user-senha").value.trim();
+    const cargo = document.getElementById("user-cargo").value;
+
+    if(!nome || !email || !senha || !cargo){
+        setAlert(alertEl,"Preencha todos os campos.",false);
+        return;
+    }
+
+    try{
+        await db.collection("usuarios").add({nome,email,senha,cargo});
+        document.getElementById("user-nome").value="";
+        document.getElementById("user-email").value="";
+        document.getElementById("user-senha").value="";
+        document.getElementById("user-cargo").value="";
+
+        await carregarUsuarios();
+        setAlert(alertEl,"Funcionário cadastrado com sucesso!");
+    }catch(err){
+        console.error(err);
+        setAlert(alertEl,"Erro ao salvar funcionário.",false);
+    }
+});
+
+// botão relatórios
+document.getElementById("btn-atualizar-rel").addEventListener("click", ()=>{
+    renderRelatorios();
+});
+</script>
+</body>
+</html>
